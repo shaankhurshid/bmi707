@@ -197,7 +197,7 @@ def backward_pass_penalized(y, X, p, weights, l=0.1, lr=0.01):
     grad_w[5] = 2 * (p - y) * p * (1 - p) * X[:, 5] + l * 2 * w_new[5]
     grad_w[6] = 2 * (p - y) * p * (1 - p) * X[:, 6] + l * 2 * w_new[6]
     grad_w[7] = 2 * (p - y) * p * (1 - p) * X[:, 7] + l * 2 * w_new[7]
-    grad_w[8] = 2 * (p - y) * p * (1 - p) * X[:, 8] + l * 2 * w_new[8]
+    grad_w[8] = 2 * (p - y) * p * (1 - p) * X[:, 8] # not penalizing bias term
 
     w_new[0] = w_new[0] - lr * np.mean(grad_w[0])
     w_new[1] = w_new[1] - lr * np.mean(grad_w[1])
