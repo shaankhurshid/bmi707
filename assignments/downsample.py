@@ -7,8 +7,8 @@ from tensorflow.keras.layers import Dense
 
 # Load data
 colnames = pd.array(range(1,112321)) # The number of time intervals in the database
-train_controls = pd.read_csv('/Volumes/medpop_afib/skhurshid/bmi707/train_controls_data.csv', names = colnames, header = None)
-train_cases = pd.read_csv('/Volumes/medpop_afib/skhurshid/bmi707/train_cases_data.csv', names = colnames, header = None)
+train_controls = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/train_controls_data.csv', names = colnames, header = None)
+train_cases = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/train_cases_data.csv', names = colnames, header = None)
 
 # Creating labels
 zeros = pd.Series(np.zeros(694))
@@ -23,6 +23,10 @@ x_train_reduced = x_train.groupby(np.arange(len(x_train.columns))//32, axis=1).m
 
 # Re-shaping data
 x_train_reshaped = x_train.values.reshape(-1, 1, 3510)
+
+# Save copy of downsampled
+np.savetxt('/mnt/ml4cvd/projects/skhurshid/bmi707/x_train_downsampled_3510.tsv',x_train_reshaped,fmt='%.1f')
+np.savetxt('/mnt/ml4cvd/projects/skhurshid/bmi707/y_train.tsv',y_train,fmt='%.1f')
 
 # Model
 model = Sequential()
