@@ -91,11 +91,19 @@ train_controls_data <- raw[subject_id %in% train_controls$subject_id]
 # BMI data
 holdout_controls_bmi <- all[subject_id %in% holdout_controls_data$subject_id]$bmi_accel
 holdout_cases_bmi <- all[subject_id %in% holdout_cases_data$subject_id]$bmi_accel
-train_controls_bmi <- all[subject_id %in% holdout_cases_data$subject_id]$bmi_accel
-train_cases_bmi <- all[subject_id %in% holdout_cases_data$subject_id]$bmi_accel
+train_controls_bmi <- all[subject_id %in% train_cases_data$subject_id]$bmi_accel
+train_cases_bmi <- all[subject_id %in% train_controls_data$subject_id]$bmi_accel
 
 # Save out
 write.table(holdout_controls_data,file='/Volumes/medpop_afib/skhurshid/bmi707/holdout_controls_data.csv',sep=',', col.names = F, row.names = F)
 write.table(holdout_cases_data,file='/Volumes/medpop_afib/skhurshid/bmi707/holdout_cases_data.csv',sep=',', col.names = F, row.names = F)
 write.table(train_cases_data,file='/Volumes/medpop_afib/skhurshid/bmi707/train_cases_data.csv',sep=',', col.names = F, row.names = F)
 write.table(train_controls_data,file='/Volumes/medpop_afib/skhurshid/bmi707/train_controls_data.csv',sep=',', col.names = F, row.names = F)
+write.csv(holdout_controls,file='/Volumes/medpop_afib/skhurshid/bmi707/holdout_controls.csv')
+write.csv(holdout_cases,file='/Volumes/medpop_afib/skhurshid/bmi707/holdout_cases.csv')
+
+# Save out
+write.table(holdout_controls_bmi,file='/Volumes/medpop_afib/skhurshid/bmi707/holdout_controls_bmi.csv',sep=',', col.names = F, row.names = F)
+write.table(holdout_cases_bmi,file='/Volumes/medpop_afib/skhurshid/bmi707/holdout_cases_bmi.csv',sep=',', col.names = F, row.names = F)
+write.table(train_controls_bmi,file='/Volumes/medpop_afib/skhurshid/bmi707/train_controls_bmi.csv',sep=',', col.names = F, row.names = F)
+write.table(train_cases_bmi,file='/Volumes/medpop_afib/skhurshid/bmi707/train_cases_bmi.csv',sep=',', col.names = F, row.names = F)
