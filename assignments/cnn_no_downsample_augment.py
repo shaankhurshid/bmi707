@@ -10,17 +10,21 @@ from sklearn.metrics import roc_curve, roc_auc_score, auc
 from sklearn.utils import shuffle
 import tensorflow as tf
 
-# Load data
+# Load regular ata
 colnames = pd.array(range(1,112321)) # The number of time intervals in the database
 train_controls = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/train_controls_data.csv', names = colnames, header = None)
 train_cases = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/train_cases_data.csv', names = colnames, header = None)
 val_controls = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/holdout_controls_data.csv', names = colnames, header = None)
 val_cases = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/holdout_cases_data.csv', names = colnames, header = None)
 
+# Load augmented data
+train_controls_augmented = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/train_controls_augmented.csv', names = colnames, header = None)
+train_cases_augmented = pd.read_csv('/mnt/ml4cvd/projects/skhurshid/bmi707/train_cases_augmented.csv', names = colnames, header = None)
+
 # Creating labels
 ## Train
-zeros = pd.Series(np.zeros(694))
-ones = pd.Series(np.ones(694))
+zeros = pd.Series(np.zeros(1388))
+ones = pd.Series(np.ones(1388))
 y_train = zeros.append(ones)
 
 ## Test
@@ -29,7 +33,7 @@ ones = pd.Series(np.ones(len(val_cases)))
 y_val = zeros.append(ones)
 
 # Combine cases and controls
-x_train = pd.concat([train_controls, train_cases])
+x_train = pd.concat([train_controls, train_controls_augmented, train_cases, train_cases_augmented])
 x_val = pd.concat([val_controls,val_cases])
 
 # Remove NAs
@@ -107,3 +111,4 @@ tpr_val = dict()
 roc_auc_val = dict()
 fpr_val, tpr_val, _ = roc_curve(y_val,np.round(val_preds[:,0],decimals=0))
 roc_auc_val = auc(fpr_val, tpr_val)
+
