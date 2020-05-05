@@ -64,24 +64,13 @@ dev.off()
 
 #################################### Step 2: AF analyses
 ############ Part A: CNN
-# Load outputs from BMI model
-bmi_actual <- fread(file='/Volumes/medpop_afib/skhurshid/bmi707/val_actual_bmi.csv',header=TRUE)
-bmi_predicted <- fread(file='/Volumes/medpop_afib/skhurshid/bmi707/val_preds_bmi.csv',header=TRUE)
-
-# Check correlation
-cor.test(bmi_predicted$`0`, bmi_actual$`0`, method = "pearson") #r=0.116, p=0.03
-
-# Scatterplot
-pdf(file='/Volumes/medpop_afib/skhurshid/bmi707/bmi_scatter.pdf',height=3,width=3,pointsize=4)
-plot(bmi_predicted$`0`,bmi_actual$`0`,pch=19,col='#3182bd',xlab='',ylab='',bty='n',
-     xlim=c(min(bmi_predicted$`0`),28),ylim=c(min(bmi_actual$`0`),60),cex=0.6)
-axis(2,at=seq(0,60,10))
-axis(1,at=seq(18,28,2))
-mtext(expression(paste("Predicted BMI (kg/m"^"2",")")),1,line=2.8)
-mtext(expression(paste("Actual BMI (kg/m"^"2",")")),2,line=2.3)
-segments(0,0,60,60,lty=5)
-
-dev.off()
+# Load outputs from AF model
+af_predicted <- fread(file='/Volumes/medpop_afib/skhurshid/bmi707/af_cnn_preds.csv')[2:347,2]
+af_predicted_binary <- ifelse(af_predicted >= 0.50,1,0)
+af_actual <- c(rep(0,173),rep(1,173))
+  
+# Check overall accuracy
+acc <- length(af_predicted_binary[af_predicted_binary[,1]==af_actual])/347
 
 ############ Part B: logistic model using average
 # Gather values for these individuals for non-DL analysis
@@ -102,6 +91,7 @@ predicted_af_logistic <- predict(logistic_model,newdata=x_test,type='response')
 predicted_af_logistic_binary <- ifelse(predicted_af_logistic<0.50,0,1)
 
 logistic_roc <- roc(response=y_test,predictor=predicted_af_logistic_binary)
+cnn_roc <- roc(response=af_actual,predictor=af_predicted_binary)
 
 # ROC
 pdf('/Volumes/medpop_afib/skhurshid/bmi707/af_roc.pdf',pointsize=6,
@@ -111,6 +101,7 @@ par(mar=c(2,2,1,1))
 
 # ROC lines
 plot(logistic_roc,xlim=c(0.8,0.2),col='#3182bd',axes=FALSE,xlab='',ylab='',lwd=2,identity=FALSE)
+plot(cnn_roc,xlim=c(0.8,0.2),col='#f03b20',axes=FALSE,xlab='',ylab='',lwd=2,identity=FALSE,add=TRUE)
 
 # Identity line
 segments(1,0,0,1,col='black',lwd=2,lty=4)
@@ -121,7 +112,7 @@ axis(2,at=seq(0,1,0.1),cex.axis=1.8,pos=1,las=1)
 mtext(side=1,'1 - Specificity',cex=2.2,line=1)
 mtext(side=2,'Sensitivity',cex=2.2,line=1)
 
-legend(0.58,0.275,lty=1,lwd=3,c('Logistic (AUC 0.523)'),
-       col='#3182bd',bty='n',cex=1)
+legend(0.58,0.275,lty=1,lwd=3,c('Logistic (AUC 0.523)','CNN (AUC 0.549)'),
+       col=c('#3182bd','#f03b20'),bty='n',cex=1)
 
 dev.off()
